@@ -1,7 +1,8 @@
 import asyncio
 import sys
 
-from ss_player.PlayerClient import PlayerClient
+# from ss_player.PlayerClient import PlayerClient
+from ss_player.snara_client import PlayerClient
 
 
 def main():
