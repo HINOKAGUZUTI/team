@@ -2,6 +2,10 @@ import asyncio
 import sys
 
 # from ss_player.PlayerClient import PlayerClient
+
+# from ss_player.kokurita_client import PlayerClient
+# from ss_player.mnaito_client import PlayerClient
+# from ss_player.rnishi_client import PlayerClient
 from ss_player.snara_client import PlayerClient
 
 
