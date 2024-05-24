@@ -29,7 +29,7 @@ class Board:
     @property
     def shape_y(self) -> int:
         return self.__board.shape[0]
-    
+
     def get_point(self, player: Player) -> int:
         score = 0
         if len(player.usable_blocks()) == 0:
@@ -102,6 +102,15 @@ class Board:
                 for b in row])
             ret.append(f'{row_id}{"".join(row_str)}')
         return '\n'.join(ret)
+
+    @staticmethod
+    def from_print_string(board: str) -> Board:
+        ret = Board()
+        for y, row in enumerate(board.splitlines()[1:]):
+            for x, c in enumerate(row[1:]):
+                if c != EmptyChar:
+                    ret.__board[y][x] = 1 if c == Player1Char else 2 if c == Player2Char else 0
+        return ret
 
     class PaddedBlock:
 
