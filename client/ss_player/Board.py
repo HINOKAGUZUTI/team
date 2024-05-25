@@ -122,11 +122,11 @@ class Board:
             pad_left = position.x
             pad_right = board.shape_x - (position.x + block.shape_x)
             self.__map = np.pad(block.block_map, ((pad_top, pad_bottom), (pad_left, pad_right)))
-            self.__decorate_corner(self.__map)
-            self.__decorate_edge(self.__map)
+            self._decorate_corner(self.__map)
+            self._decorate_edge(self.__map)
 
         @staticmethod
-        def __decorate_corner(map_):
+        def _decorate_corner(map_):
             corner_lt = np.array([[0, 0], [0, 1]])
             corner_rt = np.array([[0, 0], [1, 0]])
             corner_lb = np.array([[0, 1], [0, 0]])
@@ -145,7 +145,7 @@ class Board:
                         corner_window[1, 1] = 2
 
         @staticmethod
-        def __decorate_edge(map_):
+        def _decorate_edge(map_):
             edge_left = np.array([[0, 1]])
             edge_right = np.array([[1, 0]])
 

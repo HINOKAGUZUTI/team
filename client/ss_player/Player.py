@@ -17,7 +17,7 @@ class Player:
         self.__target = target
         self.__player_name = player_name
         self.__player_number = player_number
-        self.__usable_blocks = [b for b in BlockType]
+        self.__usable_blocks = {b for b in BlockType}
         self.__connection = connection
         self.__active = True
         self.__record: Optional[BattleRecord] = None
@@ -73,6 +73,11 @@ class Player:
         if block.block_type not in self.__usable_blocks:
             raise ValueError("passed block is not usable.")
         self.__usable_blocks.remove(block.block_type)
-    
-    def usable_blocks(self) -> list[BlockType]:
+
+    def unuse_block(self, block: Block):
+        if block.block_type in self.__usable_blocks:
+            raise ValueError("passed block is already usable.")
+        self.__usable_blocks.add(block.block_type)
+
+    def usable_blocks(self) -> set[BlockType]:
         return self.__usable_blocks
