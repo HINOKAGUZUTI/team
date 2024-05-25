@@ -66,7 +66,7 @@ class PlayerClient:
                             block = Block(shape, BlockRotation(rot))
                             piece = Board.PaddedBlock(self._board, block, Position(x, y))
                             if self._player.can_use_block(block) and self._board.can_place(self._player, piece):
-                                print(piece.map)
+                                #print(piece.map)
                                 self._player.use_block(block)
                                 self._board.place_block(self._player, piece)
 
@@ -80,7 +80,7 @@ class PlayerClient:
                                     to_s = "0123456789ABCDE"
                                     best_action = f"{shape.name}{rot}{to_s[x]}{to_s[y]}"
                                     print(n_searched, ":", best_action)
-                                    if n_searched >= 1000:
+                                    if n_searched >= 100:
                                         self._player.use_block(block)
                                         self._board.place_block(self._player, piece)
                                         return best_action
@@ -114,7 +114,7 @@ class PlayerClient:
                 for x in range(target_position.x - block.block_map.shape[1] + 2, target_position.x + 2):
                     try:
                         piece = Board.PaddedBlock(self._board, block, Position(x, y))
-                        print(piece.map)
+                        #print(piece.map)
                         if self._board.can_place_first_block(self._player, piece):
                             to_s = "0123456789ABCDE"
                             data = f"{largest_block.name}{rot.value}{to_s[x]}{to_s[y]}"
