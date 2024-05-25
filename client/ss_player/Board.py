@@ -57,7 +57,9 @@ class Board:
         if position.y < 0 or position.y + block.shape_y > self.shape_y:
             raise ValueError("invalid position")
 
-    def can_place(self, player: Player, padded_block: PaddedBlock) -> bool:
+    def can_place(self, player: Player, padded_block: PaddedBlock, first=False) -> bool:
+        if first:
+            return self.can_place_first_block(player, padded_block)
         if self.detect_collision(padded_block):
             return False
         if self.detect_side_connection(player, padded_block):
