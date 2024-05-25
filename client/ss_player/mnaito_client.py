@@ -43,18 +43,18 @@ class PlayerClient:
         self._board = Board.from_print_string(board)
         if self.player_number == 1:
             turn = self.p1turn
-               self.p1turn += 1
+            self.p1turn += 1
         else:
             turn = self.p2turn
             self.p2turn += 1
 
         best_score = float('-inf')
         best_action = 'X000'
-    
+
         for shape in [b for b in self._player.usable_blocks() if b != BlockType.X]:
             for rot in range(8):
                 #if is_valid_rotation(shape.name, rot) == 0 :
-                #	continue
+                #    continue
                 for y in range(1, self._board.shape_y - np.size(shape.block_map, axis=0)):
                     for x in range(1, self._board.shape_x - np.size(shape.block_map, axis=1)):
                         try:
@@ -64,9 +64,8 @@ class PlayerClient:
                                     else self._board.can_place(self._player, piece)):
                                 self._player.use_block(block)
                                 self._board.place_block(self._player, piece)
-                            
+
                                 score = self.minmax(self._board, 3, float('-inf'), float('inf'), False)
-                            
                                 self._player.unuse_block(block)
                                 self._board.remove_block(self._player, piece)
 
@@ -81,41 +80,40 @@ class PlayerClient:
         return best_action
 
     #def is_valid_rotation(shape, rot) :
-    #	if rot == 0 :
-    #		return 1 :
-    #	if shape == 'A' :
-    #		return 0
-    #	else if shape == 'B' or shape == 'C' :
-    #		if rot == 2
-    #			return 1
-    #		else :
-    #			return 0
-    #	
+    #    if rot == 0 :
+    #        return 1 :
+    #    if shape == 'A' :
+    #        return 0
+    #    else if shape == 'B' or shape == 'C' :
+    #        if rot == 2
+    #            return 1
+    #        else :
+    #            return 0
+    #
 
     def evaluate_board(self, board):
         player_score = self.calculate_score(board, self._player)
         opponent_score = self.calculate_score(board, self._opponent)
         return player_score - opponent_score
 
-    #def	calculate_score(self, board, player):
+    #def    calculate_score(self, board, player):
     #    influence_area = 0
     #    for y in range(1, board.shape_y - np.size(shape.block_map, axis=0)):
     #        for x in range(1, board.shape_x - np.size(shape.block_map, axis=1)):
-                
 
     def calculate_score(self, board, player):
-    	usable_blocks = player.usable_blocks()
-    	placeable_positions = 0
-    	for shape in usable_blocks:
-        	for rot in range(8):
-            	for y in range(1, board.shape_y - np.size(shape.block_map, axis=0)):
-                	for x in range(1, board.shape_x - np.size(shape.block_map, axis=1)):
-                    	block = Block(shape, BlockRotation(rot))
-                    	piece = Board.PaddedBlock(board, block, Position(x, y))
-                    	if board.can_place(player, piece):
-                        	placeable_positions += 1
-    	placed_blocks_area = sum(np.sum(block.block_map) for block in player.used_blocks)
-    		return placeable_positions + placed_blocks_area
+        usable_blocks = player.usable_blocks()
+        placeable_positions = 0
+        for shape in usable_blocks:
+            for rot in range(8):
+                for y in range(1, board.shape_y - np.size(shape.block_map, axis=0)):
+                    for x in range(1, board.shape_x - np.size(shape.block_map, axis=1)):
+                        block = Block(shape, BlockRotation(rot))
+                        piece = Board.PaddedBlock(board, block, Position(x, y))
+                        if board.can_place(player, piece):
+                            placeable_positions += 1
+        placed_blocks_area = sum(np.sum(block.block_map) for block in player.used_blocks)
+        return placeable_positions + placed_blocks_area
 
     def minmax(self, board, depth, alpha, beta, is_maximizing_player):
         if depth == 0:
@@ -133,12 +131,12 @@ class PlayerClient:
                                 if board.can_place(self._player, piece):
                                     self._player.use_block(block)
                                     board.place_block(self._player, piece)
-                                
+
                                     eval = self.minmax(board, depth - 1, alpha, beta, False)
-                                
+
                                     self._player.unuse_block(block)
                                     board.remove_block(self._player, piece)
-                                
+
                                     max_eval = max(max_eval, eval)
                                     alpha = max(alpha, eval)
                                     if beta <= alpha:
@@ -158,12 +156,12 @@ class PlayerClient:
                                 if board.can_place(self._opponent, piece):
                                     self._opponent.use_block(block)
                                     board.place_block(self._opponent, piece)
-                                
+
                                     eval = self.minmax(board, depth - 1, alpha, beta, True)
-                                
+
                                     self._opponent.unuse_block(block)
                                     board.remove_block(self._opponent, piece)
-                                
+
                                     min_eval = min(min_eval, eval)
                                     beta = min(beta, eval)
                                     if beta <= alpha:
@@ -171,7 +169,6 @@ class PlayerClient:
                             except ValueError:
                                 continue
             return min_eval
-
 
 
     @staticmethod
