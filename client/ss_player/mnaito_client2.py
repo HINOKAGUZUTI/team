@@ -59,13 +59,13 @@ class PlayerClient:
 
         for shape in [b for b in self._player.usable_blocks() if b != BlockType.X]:
             for rot in range(8):
-                for y in range(1, self._board.shape_y - shape.block_map.shape[0] + 2):
-                    for x in range(1, self._board.shape_x - shape.block_map.shape[1] + 2):
+                for y in range(1, self._board.shape_y - shape.block_map.shape[0] + 1):
+                    for x in range(1, self._board.shape_x - shape.block_map.shape[1] + 1):
                         try:
                             n_searched += 1
                             block = Block(shape, BlockRotation(rot))
                             piece = Board.PaddedBlock(self._board, block, Position(x, y))
-                            if self._board.can_place(self._player, piece):
+                            if self._player.can_use_block(block) and self._board.can_place(self._player, piece):
                                 print(piece.map)
                                 self._player.use_block(block)
                                 self._board.place_block(self._player, piece)
@@ -80,7 +80,7 @@ class PlayerClient:
                                     to_s = "0123456789ABCDE"
                                     best_action = f"{shape.name}{rot}{to_s[x]}{to_s[y]}"
                                     print(n_searched, ":", best_action)
-                                    if n_searched >= 10000:
+                                    if n_searched >= 1000:
                                         self._player.use_block(block)
                                         self._board.place_block(self._player, piece)
                                         return best_action
@@ -147,9 +147,9 @@ class PlayerClient:
 
         corners = Board()
         corners.__board = np.copy(board.now_board())
-        Board.PaddedBlock._decorate_corner(corners)
+        # Board.PaddedBlock._decorate_corner(corners)
         placeable_positions = np.sum(corners.now_board())
-        placed_blocks_area = sum(np.sum(block.block_map) for block in player.used_blocks)
+        placed_blocks_area = sum(np.sum(block.block_map) for block in player.used_blocks())
         return placeable_positions + placed_blocks_area
 
     def minmax(self, board, depth, alpha, beta, is_maximizing_player):

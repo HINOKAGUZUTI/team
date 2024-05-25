@@ -92,6 +92,9 @@ class Board:
     def place_block(self, player: Player, padded_block: PaddedBlock):
         self.__board += padded_block.block_map * player.player_number
 
+    def remove_block(self, player: Player, padded_block: PaddedBlock):
+        self.__board -= padded_block.block_map * player.player_number
+
     def to_print_string(self) -> str:
         row_ids = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E']
 

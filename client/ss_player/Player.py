@@ -81,3 +81,6 @@ class Player:
 
     def usable_blocks(self) -> set[BlockType]:
         return self.__usable_blocks
+
+    def used_blocks(self) -> set[BlockType]:
+        return {b for b in BlockType} - self.__usable_blocks
