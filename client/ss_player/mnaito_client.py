@@ -18,8 +18,8 @@ class PlayerClient:
         self._loop = loop
         self._socket = socket
         self._player_number = player_number
-        self.p1turn = 0
-        self.p2turn = 0
+        self.my_turn = 0
+        self.op_turn = 0
         self._board = Board()
         self._player = Player(player_number, "pl", "player", None)
         self._opponent = Player(3 - player_number, "op", "opponent", None)
@@ -41,17 +41,12 @@ class PlayerClient:
 
     def create_action(self, board):
         self._board = Board.from_print_string(board)
-        if self.player_number == 1:
-            turn = self.p1turn
-            self.p1turn += 1
-        else:
-            turn = self.p2turn
-            self.p2turn += 1
 
-        best_score = float('-inf')
+        inf = float('inf')
+        best_score = -inf
         best_action = 'X000'
 
-        for shape in [b for b in self._player.usable_blocks() if b != BlockType.X]:
+        for shape in [b for b in self._player.usable_blocks()[::-1] if b != BlockType.X]:
             for rot in range(8):
                 #if is_valid_rotation(shape.name, rot) == 0 :
                 #    continue
@@ -60,12 +55,13 @@ class PlayerClient:
                         try:
                             block = Block(shape, BlockRotation(rot))
                             piece = Board.PaddedBlock(self._board, block, Position(x, y))
-                            if (self._board.can_place_first_block(self._player, piece) if turn == 0
-                                    else self._board.can_place(self._player, piece)):
+                            if self._board.can_place(self._player, piece, first=(self.my_turn == 0)):
                                 self._player.use_block(block)
                                 self._board.place_block(self._player, piece)
 
-                                score = self.minmax(self._board, 3, float('-inf'), float('inf'), False)
+                                print((piece))
+                                score = self.minmax(self._board, 2, float('-inf'), float('inf'), False)
+                                print("score:", score)
                                 self._player.unuse_block(block)
                                 self._board.remove_block(self._player, piece)
 
@@ -76,6 +72,7 @@ class PlayerClient:
                         except ValueError as e:
                             print(f"Invalid Position or Block: {e}")
 
+        self.my_turn += 1
         print(best_action)
         return best_action
 
@@ -110,7 +107,7 @@ class PlayerClient:
                     for x in range(1, board.shape_x - np.size(shape.block_map, axis=1)):
                         block = Block(shape, BlockRotation(rot))
                         piece = Board.PaddedBlock(board, block, Position(x, y))
-                        if board.can_place(player, piece):
+                        if board.can_place(player, piece, first=(self.my_turn == 0)):
                             placeable_positions += 1
         placed_blocks_area = sum(np.sum(block.block_map) for block in player.used_blocks)
         return placeable_positions + placed_blocks_area
@@ -128,7 +125,7 @@ class PlayerClient:
                             try:
                                 block = Block(shape, BlockRotation(rot))
                                 piece = Board.PaddedBlock(board, block, Position(x, y))
-                                if board.can_place(self._player, piece):
+                                if board.can_place(self._player, piece, first=(self.my_turn == 0)):
                                     self._player.use_block(block)
                                     board.place_block(self._player, piece)
 
@@ -153,7 +150,7 @@ class PlayerClient:
                             try:
                                 block = Block(shape, BlockRotation(rot))
                                 piece = Board.PaddedBlock(board, block, Position(x, y))
-                                if board.can_place(self._opponent, piece):
+                                if board.can_place(self._opponent, piece, first=(self.my_turn == 0)):
                                     self._opponent.use_block(block)
                                     board.place_block(self._opponent, piece)
 
